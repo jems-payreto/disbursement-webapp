@@ -1,0 +1,4 @@
+use this under the typescript error if you want to disable type checking
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
