@@ -2,61 +2,6 @@ import { DisbursementFormValues } from "@/types";
 import { Dayjs } from "dayjs";
 import * as yup from "yup";
 
-const MAX_FILE_SIZE = 102400; //100KB
-
-const validFileExtensions = {
-    image: [
-        "jpg",
-        "gif",
-        "png",
-        "jpeg",
-        "svg",
-        "webp",
-        "pdf",
-        "doc",
-        "docx",
-        "csv",
-    ],
-};
-
-function isValidFileType(fileName, fileType) {
-    return (
-        fileName &&
-        validFileExtensions[fileType].indexOf(fileName.split(".").pop()) > -1
-    );
-}
-
-const RequirementSchema = yup.object().shape({
-    fileType: yup
-        .string()
-        .required()
-        .test("required", "File type is required.", (value) => {
-            if (value === "none") {
-                return false;
-            }
-
-            return true;
-        }),
-    file: yup
-        .mixed<string | File>()
-        .required()
-        .test("required", "File is required", (value) => {
-            if (!value) {
-                return false;
-            }
-
-            return true;
-        })
-        .test("is-valid-type", "Not a valid image type", (value) =>
-            isValidFileType(value && value.name.toLowerCase(), "image")
-        )
-        .test(
-            "is-valid-size",
-            "Max allowed size is 100KB",
-            (value) => value && value.size <= MAX_FILE_SIZE
-        ),
-});
-
 export const createDisbursement: yup.ObjectSchema<DisbursementFormValues> = yup
     .object()
     .shape({
@@ -99,8 +44,4 @@ export const createDisbursement: yup.ObjectSchema<DisbursementFormValues> = yup
 
                 return true;
             }),
-        requirements: yup
-            .array()
-            .of(RequirementSchema)
-            .required("Requirements are required."),
     });

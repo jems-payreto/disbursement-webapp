@@ -16,6 +16,10 @@ type TransformedResponse<T> = {
     ok?: boolean;
 };
 
+const baseQuery = fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_APP_BASE_URL,
+});
+
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
     reducerPath: "api",

@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./services/api";
-// ...
+import disbursementReducer from "@/features/disbursement/disbursementSlice";
 
 export const store = configureStore({
     reducer: {
+        disbursement: disbursementReducer,
         [api.reducerPath]: api.reducer,
     },
     middleware: (getDefaultMiddleware) =>

@@ -19,7 +19,13 @@ type Action = {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const initialValues = {
-    steps: ["Basic requirements", "File requirements", "Preview", "Status"],
+    steps: [
+        "Basic requirements",
+        "Primary file requirements",
+        "Secondary file requirements",
+        "Preview",
+        "Status",
+    ],
     activeStep: 0,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     handleNext: () => {},

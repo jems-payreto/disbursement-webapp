@@ -1,5 +1,5 @@
 // React
-import { useState } from "react";
+import { useContext, useEffect } from "react";
 
 // MUI
 import { Button, Stack, Typography, Paper } from "@mui/material";
@@ -18,18 +18,26 @@ import {
     useGetDisbursementQuery,
 } from "@/app/services/api";
 
+// Components
 import DisbursementCreateStepper from "@components/DisbursementCreateStepper";
-
 import DisbursementCreateStepOne from "@components/DisbursementCreateStepOne";
+
+import CreateBasicRequirementsForm from "@components/forms/CreateBasicRequirementsForm";
+import CreateFileRequirementsForm from "@components/forms/CreateFileRequirementsForm";
 
 // Types
 import type { DisbursementFormValues } from "@/types";
 type DisbursementResolver = Resolver<DisbursementFormValues>;
 
-// Validations
-import { createDisbursement } from "@/validations/createDisbursement";
+// Contexts
+import DisbursementCreateStepperContext from "@/contexts/DisbursementCreateStepperContext";
+import CreatePreviewForm from "@/components/forms/CreatePreviewForm";
+import StatusForm from "@/components/forms/StatusForm";
+import { ScrollRestoration } from "react-router-dom";
 
 const Create = () => {
+    const { activeStep } = useContext(DisbursementCreateStepperContext);
+
     // Initialize create api
     const [create] = useCreateDisbursementMutation();
 
@@ -37,48 +45,13 @@ const Create = () => {
     const { data } = useGetDisbursementQuery(undefined, {
         selectFromResult: ({ data }) => ({
             // Format duedate
-            data: { ...data, dueDate: dayjs(data?.dueDate) },
+            data: { ...data, dueDate: data?.dueDate },
         }),
     });
 
-    const disbursementResolver: DisbursementResolver =
-        yupResolver(createDisbursement);
-
-    // Initial values
-    const formValues: DisbursementFormValues = {
-        dueDate: data?.dueDate || dayjs(Date.now()),
-        payee: data?.payee || "",
-        costCenter: data?.costCenter || "none",
-        vendor: data?.vendor || "none",
-        amount: data?.amount || 0,
-        particulars: data?.particulars || "",
-        paymentMode: data?.paymentMode || "none",
-        requirements: [{ fileType: "none", file: "" }],
-    };
-
-    const form = useForm<DisbursementFormValues>({
-        defaultValues: {
-            dueDate: dayjs(Date.now()),
-            payee: "",
-            costCenter: "none",
-            vendor: "none",
-            amount: undefined,
-            particulars: "",
-            paymentMode: "none",
-            requirements: [{ fileType: "none", file: "" }],
-        },
-        // values: formValues,
-        resolver: disbursementResolver,
-    });
-
-    const { handleSubmit, control } = form;
-
-    const onSumbit: SubmitHandler<DisbursementFormValues> = async (data) => {
-        await create(data)
-            .unwrap()
-            .then((res) => console.log("res", res))
-            .catch((err) => console.log("err", err));
-    };
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [activeStep]);
 
     return (
         <Paper sx={{ my: "24px" }}>
@@ -96,35 +69,30 @@ const Create = () => {
             {/* Stepper */}
             <DisbursementCreateStepper />
 
-            {/* Create Form */}
-            <Stack
-                component="form"
-                noValidate
-                gap="16px"
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                onSubmit={handleSubmit(onSumbit)}
-            >
-                {/* Input Fields */}
-                <DisbursementCreateStepOne form={form} />
+            {activeStep === 0 && (
+                // Basic Requirements Form
+                <CreateBasicRequirementsForm />
+            )}
 
-                {/* Submit Button */}
-                <Stack
-                    alignItems="flex-end"
-                    bgcolor="rgba(221, 230, 237, 0.60)"
-                    px="40px"
-                    py="19px"
-                >
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{ py: "8px" }}
-                    >
-                        Next
-                    </Button>
-                </Stack>
+            {activeStep === 1 && (
+                // Primary File Requirements Form
+                <CreateFileRequirementsForm />
+            )}
 
-                <DevTool control={control} />
-            </Stack>
+            {activeStep === 2 && (
+                // Secondary File Requirements Form
+                <CreateFileRequirementsForm />
+            )}
+            {activeStep === 3 && (
+                // Preview
+                <CreatePreviewForm />
+            )}
+            {activeStep === 4 && (
+                // Status
+                <StatusForm />
+            )}
+
+            <ScrollRestoration />
         </Paper>
     );
 };

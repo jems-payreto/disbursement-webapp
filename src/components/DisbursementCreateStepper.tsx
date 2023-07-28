@@ -19,13 +19,30 @@ const DisbursementCreateStepper = () => {
 
     return (
         <Stack px="40px" py="19px">
-            <Stepper activeStep={activeStep}>
+            <Stepper
+                activeStep={activeStep}
+                alternativeLabel
+                sx={{
+                    "& .MuiStepLabel-label": {
+                        fontSize: "0.8rem",
+                    },
+                }}
+            >
                 {steps.map((label, index) => {
                     const stepProps: { completed?: boolean } = {};
                     const labelProps: {
                         optional?: ReactNode;
                         error?: boolean;
                     } = {};
+
+                    if (index === 3) {
+                        labelProps.optional = (
+                            <Typography variant="caption" color="info.main">
+                                (Submit Request)
+                            </Typography>
+                        );
+                        // labelProps.error = true;
+                    }
 
                     return (
                         <Step key={label} {...stepProps}>
@@ -34,9 +51,6 @@ const DisbursementCreateStepper = () => {
                     );
                 })}
             </Stepper>
-            <Button onClick={handleNext}>
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
         </Stack>
     );
 };
