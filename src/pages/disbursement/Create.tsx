@@ -13,10 +13,10 @@ import { DevTool } from "@hookform/devtools";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 // Api
-import {
-    useCreateDisbursementMutation,
-    useGetDisbursementQuery,
-} from "@/app/services/api";
+// import {
+//     useCreateDisbursementMutation,
+//     useGetDisbursementQuery,
+// } from "@/app/services/api";
 
 // Components
 import DisbursementCreateStepper from "@components/DisbursementCreateStepper";
@@ -34,24 +34,30 @@ import DisbursementCreateStepperContext from "@/contexts/DisbursementCreateStepp
 import CreatePreviewForm from "@/components/forms/CreatePreviewForm";
 import StatusForm from "@/components/forms/StatusForm";
 import { ScrollRestoration } from "react-router-dom";
+import { useTestQuery } from "@/features/disbursement/disbursementApiSlice";
 
 const Create = () => {
     const { activeStep } = useContext(DisbursementCreateStepperContext);
 
     // Initialize create api
-    const [create] = useCreateDisbursementMutation();
+    // const [create] = useCreateDisbursementMutation();
 
-    // Fetch initial values
-    const { data } = useGetDisbursementQuery(undefined, {
-        selectFromResult: ({ data }) => ({
-            // Format duedate
-            data: { ...data, dueDate: data?.dueDate },
-        }),
-    });
+    // // Fetch initial values
+    // const { data } = useGetDisbursementQuery(undefined, {
+    //     selectFromResult: ({ data }) => ({
+    //         // Format duedate
+    //         data: { ...data, dueDate: data?.dueDate },
+    //     }),
+    // });
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [activeStep]);
+
+    const { data, error } = useTestQuery(null);
+
+    console.log("data", data);
+    console.log("error", error);
 
     return (
         <Paper sx={{ my: "24px" }}>

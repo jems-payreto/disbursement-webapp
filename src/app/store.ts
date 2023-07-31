@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./services/api";
 import disbursementReducer from "@/features/disbursement/disbursementSlice";
+import authReducer from "@/features/auth/authSlice";
 
 export const store = configureStore({
     reducer: {
-        disbursement: disbursementReducer,
         [api.reducerPath]: api.reducer,
+        disbursement: disbursementReducer,
+        auth: authReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(api.middleware),

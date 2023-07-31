@@ -11,54 +11,60 @@ import { DisbursementCreateStepperContextProvider } from "./contexts/Disbursemen
 import DisbursementCreate from "./pages/disbursement/Create";
 import DisbursementCreateFile from "./pages/disbursement/CreateFile";
 import ErrorrBoundary from "./components/ErrorrBoundary";
+import RequireAuth from "./features/auth/RequireAuth";
+import Login from "./features/auth/Login";
 
 const routes = createRoutesFromElements(
     <Route path="/">
-        <Route path="auth" element={<AuthLayout />}></Route>
+        <Route path="auth" element={<AuthLayout />}>
+            <Route path="login" element={<Login />} />
+        </Route>
 
-        <Route
-            element={
-                <DrawerContextProvider>
-                    <PageLayout />
-                </DrawerContextProvider>
-            }
-        >
-            {/* Dashboard */}
-            <Route index element={<DashboardPage />} />
+        <Route element={<RequireAuth />}>
+            <Route
+                element={
+                    <DrawerContextProvider>
+                        <PageLayout />
+                    </DrawerContextProvider>
+                }
+            >
+                {/* Dashboard */}
+                <Route index element={<DashboardPage />} />
 
-            {/* Disbursement */}
-            <Route path="disbursement">
-                <Route path="lists">
-                    <Route path=":id">
-                        <Route path="edit" />
+                {/* Disbursement */}
+                <Route path="disbursement">
+                    <Route path="lists" element={<DisbursementCreate />}>
+                        <Route path=":id">
+                            <Route path="edit" />
+                        </Route>
                     </Route>
+                    <Route
+                        path="create"
+                        element={
+                            <DisbursementCreateStepperContextProvider>
+                                <DisbursementCreate />
+                            </DisbursementCreateStepperContextProvider>
+                        }
+                    />
+                    <Route
+                        path="create-file"
+                        element={<DisbursementCreateFile />}
+                        errorElement={<ErrorrBoundary />}
+                    />
                 </Route>
-                <Route
-                    path="create"
-                    element={
-                        <DisbursementCreateStepperContextProvider>
-                            <DisbursementCreate />
-                        </DisbursementCreateStepperContextProvider>
-                    }
-                />
-                <Route
-                    path="create-file"
-                    element={<DisbursementCreateFile />}
-                    errorElement={<ErrorrBoundary />}
-                />
-            </Route>
 
-            {/* Reports */}
-            <Route path="reports">
-                <Route path="lists" />
-            </Route>
+                {/* Reports */}
+                <Route path="reports">
+                    <Route path="lists" />
+                </Route>
 
-            {/* Configuration */}
-            <Route path="configuration">
-                <Route path="vendors" />
-                <Route path="cost-centers" />
-                <Route path="payee-profile" />
-                <Route path="user-management" />
+                {/* Configuration */}
+                <Route path="configuration">
+                    <Route path="vendors" />
+                    <Route path="cost-centers" />
+                    <Route path="payee-profile" />
+                    <Route path="user-management" />
+                </Route>
             </Route>
         </Route>
     </Route>
